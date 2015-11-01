@@ -4,54 +4,20 @@ if (!defined('QA_VERSION')) {
    require_once QA_INCLUDE_DIR.'app/emails.php';
 }
 
-// for localtest START
-/*************************
-qa_opt('q2a-stepmail-question-1', 'question step1 mail body.');
-qa_opt('q2a-stepmail-question-2', 'question step2 mail body.');
-qa_opt('q2a-stepmail-question-3', 'question step3 mail body.');
-qa_opt('q2a-stepmail-question-4', 'question step4 mail body.');
-qa_opt('q2a-stepmail-question-title-1', 'question step1 mail title');
-qa_opt('q2a-stepmail-question-title-2', 'question step2 mail title');
-qa_opt('q2a-stepmail-question-title-3', 'question step3 mail title');
-qa_opt('q2a-stepmail-question-title-4', 'question step4 mail title');
-qa_opt('q2a-stepmail-question-round-1', 3);
-qa_opt('q2a-stepmail-question-round-2', 10);
-qa_opt('q2a-stepmail-question-round-3', 20);
-qa_opt('q2a-stepmail-question-round-4', 30);
-***************************/
-// for localtest END
-
 class q2a_stepmail_question_event
 {
 	function process_event ($event, $userid, $handle, $cookieid, $params)
 	{
-		if ($event != 'q_post')
-			return;
-
+		if ($event != 'q_post') return;
 
 		$db_round = 0;
 		$posts = $this->getQuestionCount($userid);
 		foreach($posts as $post) {
 			$db_round = $post['round'];
 		}
-// for localtest START
-/*************************
-$fp = fopen("/tmp/plugin05.log", "a+");
-$outs = "db_round:".$db_round."\n";
-fputs($fp, $outs);
-fclose($fp);
-***************************/
-// for localtest END
+
 		for($i=1; $i<=4; $i++){
 			$round = qa_opt('q2a-stepmail-question-round-' . $i);
-// for localtest START
-/*************************
-$fp = fopen("/tmp/plugin05.log", "a+");
-$outs = "(".$i.") round:".$round."\n";
-fputs($fp, $outs);
-fclose($fp);
-***************************/
-// for localtest END
 			if ($round == $db_round) {
 				$user = $this->getUserInfo($userid);
 				$body = qa_opt('q2a-stepmail-question-' . $i);
@@ -59,7 +25,8 @@ fclose($fp);
 				$body = strtr($body, 
 					array(
 						'^username' => $user['handle'],
-						'^sitename' => qa_opt('site_title')
+						'^sitename' => qa_opt('site_title'),
+						'^siteurl' => qa_opt('site_url'),
 					)
 				);
 				$this->sendEmail($title, $body, $user['handle'], $user['email']);
@@ -78,29 +45,10 @@ fclose($fp);
 		$params['toname'] = $toname;
 		$params['toemail'] = $toemail;
 		$params['html'] = false;
-// for debug START
-/***********************************
-$fp = fopen("/tmp/plugin05.log", "a+");
-$outs = "fromemail:".$mail_params['fromemail']."\n";
-fputs($fp, $outs);
-$outs = "fromname:".$mail_params['fromname'] . "\n";
-fputs($fp, $outs);
-$outs = "subject:".$mail_params['subject'] . "\n";
-fputs($fp, $outs);
-$outs = "body:".$mail_params['body'] . "\n";
-fputs($fp, $outs);
-$outs = "toname:".$mail_params['toname'] . "\n";
-fputs($fp, $outs);
-$outs = "toemail:".$mail_params['toemail'] . "\n";
-fputs($fp, $outs);
-fclose($fp);
-**********************************/
-// for debug END
 
-		qa_send_email($params);
+//		qa_send_email($params);
 
-		//$params['toemail'] = 'yuichi.shiga@gmail.com';
-		$params['toemail'] = 'ryuta_takeyama@nexyzbb.ne.jp';
+		$params['toemail'] = 'yuichi.shiga@gmail.com';
 		qa_send_email($params);
 	}
 
