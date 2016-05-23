@@ -1,5 +1,5 @@
 <?php
-if (!defined('QA_VERSION')) { 
+if (!defined('QA_VERSION')) {
 	require_once dirname(empty($_SERVER['SCRIPT_FILENAME']) ? __FILE__ : $_SERVER['SCRIPT_FILENAME']).'/../../qa-include/qa-base.php';
    require_once QA_INCLUDE_DIR.'app/emails.php';
 }
@@ -22,7 +22,7 @@ class q2a_stepmail_question_event
 				$user = $this->getUserInfo($userid);
 				$body = qa_opt('q2a-stepmail-question-' . $i);
 				$title = qa_opt('q2a-stepmail-question-title-' . $i);
-				$body = strtr($body, 
+				$body = strtr($body,
 					array(
 						'^username' => $user['handle'],
 						'^sitename' => qa_opt('site_title'),
@@ -45,9 +45,9 @@ class q2a_stepmail_question_event
 		$params['toname'] = $toname;
 		$params['toemail'] = $toemail;
 		$params['html'] = false;
+		qa_send_email($params);
 
-//		qa_send_email($params);
-
+		// for debug
 		$params['toemail'] = 'yuichi.shiga@gmail.com';
 		qa_send_email($params);
 	}
